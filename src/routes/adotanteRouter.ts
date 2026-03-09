@@ -10,11 +10,11 @@ const adotanteRepository = new AdotanteRepository(
   AppDataSource.getRepository("AdotanteEntity")
 );
 const adotanteController = new AdotanteController(adotanteRepository);
-const validateBody:RequestHandler = (req, res, next) => middlewareValidadorBodyAdotante(req, res, next);
+const validateBodyAdotante:RequestHandler = (req, res, next) => middlewareValidadorBodyAdotante(req, res, next);
 const validateEnderecoBody:RequestHandler = (req, res, next) => middlewareValidadorBodyEndereco(req, res, next);
 
 router
-  .post("/", validateBody, (req, res) => adotanteController.criaAdotante(req, res))
+  .post("/", validateBodyAdotante, (req, res) => adotanteController.criaAdotante(req, res))
   .get("/", (req, res) => adotanteController.listaAdotantes(req, res))
   .put("/:id", (req, res) => adotanteController.atualizaAdotante(req, res))
   .delete("/:id", (req, res) => adotanteController.deletaAdotante(req, res))

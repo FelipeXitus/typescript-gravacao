@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import * as yup from "yup";
 import AdotanteEntity from "../entities/AdotanteEntity";
 import AdotanteRepository from "../repositories/AdotanteRepository";
@@ -49,7 +49,7 @@ export default class AdotanteController {
     await this.repository.criaAdotante(novoAdotante);
     return res
       .status(201)
-      .json({ data: { id: novoAdotante.id, nome, celular, email } });
+      .json({ data: { id: novoAdotante.id, nome, celular, email, endereco } });
   }
   async atualizaAdotante(
     req: Request<TipoRequestParamsAdotante, {}, TipoRequestBodyAdotante>,
@@ -78,7 +78,8 @@ export default class AdotanteController {
         id: adotante.id,
         nome: adotante.nome,
         celular: adotante.celular,
-        email: adotante.email
+        email: adotante.email,
+        endereco: adotante.endereco!==null? adotante.endereco : undefined,
       };
     });
     return res.json({ data });
@@ -100,11 +101,9 @@ export default class AdotanteController {
     return res.sendStatus(204);
   }
 
-  async atualizaEnderecoAdotante(req: Request, res: Response) {
+  async atualizaEnderecoAdotante(req: Request<TipoRequestParamsAdotante, {}, EnderecoEntity>,  res: Response<TipoResponseBodyAdotante>) {
     const { id } = req.params;
-    const { logradouro, numero, cidade, estado, cep, complemento } = req.body;
-    const endereco = new EnderecoEntity(logradouro, numero, cidade, estado, cep, complemento);
-    const {success, message} = await this.repository.atualizaEnderecoAdotante(Number(id), endereco);
+    const {success, message} = await this.repository.atualizaEnderecoAdotante(Number(id), req.body);
 
     if (!success) {
       return res.status(404).json({ error: message });
