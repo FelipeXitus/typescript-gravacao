@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as yup from "yup";
 import AdotanteEntity from "../entities/AdotanteEntity";
 import AdotanteRepository from "../repositories/AdotanteRepository";
-import EnderecoEntity from "../entities/Endereco";
+import EnderecoEntity from "../entities/EnderecoEntity";
 import { TipoRequestBodyAdotante, TipoRequestParamsAdotante, TipoResponseBodyAdotante } from "../tipos/tiposAdotante";
 
 const adotanteBodyValidator: yup.ObjectSchema<Omit<TipoRequestBodyAdotante, "endereco">> = yup.object().shape({
@@ -100,16 +100,11 @@ export default class AdotanteController {
     return res.sendStatus(204);
   }
 
-  async atualizaEnderecoAdotante(
-    req: Request<TipoRequestParamsAdotante, {}, TipoRequestBodyAdotante>,
-    res: Response<TipoResponseBodyAdotante>
-  ) {
+  async atualizaEnderecoAdotante(req: Request, res: Response) {
     const { id } = req.params;
-
-    const { success, message } = await this.repository.atualizaEnderecoAdotante(
-      Number(id),
-      req.body.endereco as EnderecoEntity
-    );
+    const { logradouro, numero, cidade, estado, cep, complemento } = req.body;
+    const endereco = new EnderecoEntity(logradouro, numero, cidade, estado, cep, complemento);
+    const {success, message} = await this.repository.atualizaEnderecoAdotante(Number(id), endereco);
 
     if (!success) {
       return res.status(404).json({ error: message });

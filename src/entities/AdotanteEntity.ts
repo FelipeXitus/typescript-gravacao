@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import EnderecoEntity from "./Endereco";
+import EnderecoEntity from "./EnderecoEntity";
 import PetEntity from "./PetEntity";
 
 @Entity()
