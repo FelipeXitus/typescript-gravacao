@@ -2,11 +2,7 @@ import { Request, Response } from "express";
 import AdotanteEntity from "../entities/AdotanteEntity";
 import AdotanteRepository from "../repositories/AdotanteRepository";
 import EnderecoEntity from "../entities/Endereco";
-import {
-  TipoRequestBodyAdotante,
-  TipoRequestParamsAdotante,
-  TipoResponseBodyAdotante,
-} from "../tipos/tiposAdotante";
+import { TipoRequestBodyAdotante, TipoRequestParamsAdotante, TipoResponseBodyAdotante } from "../tipos/tiposAdotante";
 
 export default class AdotanteController {
   constructor(private repository: AdotanteRepository) {}
