@@ -1,8 +1,17 @@
 import { Request, Response } from "express";
+import * as yup from "yup";
 import AdotanteEntity from "../entities/AdotanteEntity";
 import AdotanteRepository from "../repositories/AdotanteRepository";
 import EnderecoEntity from "../entities/Endereco";
 import { TipoRequestBodyAdotante, TipoRequestParamsAdotante, TipoResponseBodyAdotante } from "../tipos/tiposAdotante";
+
+const adotanteBodyValidator: yup.ObjectSchema<Omit<TipoRequestBodyAdotante, "endereco">> = yup.object().shape({
+  nome: yup.string().defined().required("O nome é obrigatório"),
+  senha: yup.string().defined().required("A senha é obrigatória").min(6),
+  celular: yup.string().defined().required("O celular é obrigatório"),
+  email: yup.string().defined().required("O email é obrigatório"),
+  foto: yup.string().optional()
+});
 
 export default class AdotanteController {
   constructor(private repository: AdotanteRepository) {}
@@ -10,12 +19,29 @@ export default class AdotanteController {
     req: Request<TipoRequestParamsAdotante, {}, TipoRequestBodyAdotante>,
     res: Response<TipoResponseBodyAdotante>
   ) {
-    const { nome, celular, endereco, foto, senha } = <AdotanteEntity>req.body;
+    const { nome, celular, endereco, email, foto, senha } = <AdotanteEntity>req.body;
+    let bodyValidated: TipoRequestBodyAdotante;
+    try {
+      bodyValidated = await adotanteBodyValidator.validate(req.body, {
+        abortEarly: false,
+        stripUnknown: true,
+      });
+    } catch (error) {
+      const yupErrors = error as yup.ValidationError;
+      const validationErrors:Record<string, string> = {};
+      yupErrors.inner.forEach((err) => {
+        if (err.path) {
+          validationErrors[err.path] = err.message;
+        }
+      });
+      return res.status(400).json({ error: validationErrors });
+    }
 
     const novoAdotante = new AdotanteEntity(
       nome,
       senha,
       celular,
+      email,
       foto,
       endereco
     );
@@ -23,7 +49,7 @@ export default class AdotanteController {
     await this.repository.criaAdotante(novoAdotante);
     return res
       .status(201)
-      .json({ data: { id: novoAdotante.id, nome, celular } });
+      .json({ data: { id: novoAdotante.id, nome, celular, email } });
   }
   async atualizaAdotante(
     req: Request<TipoRequestParamsAdotante, {}, TipoRequestBodyAdotante>,
@@ -52,6 +78,7 @@ export default class AdotanteController {
         id: adotante.id,
         nome: adotante.nome,
         celular: adotante.celular,
+        email: adotante.email
       };
     });
     return res.json({ data });

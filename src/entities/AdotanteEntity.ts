@@ -19,6 +19,8 @@ export default class AdotanteEntity {
   senha: string;
   @Column()
   celular: string;
+  @Column()
+  email: string;
   @Column({ nullable: true })
   foto?: string;
 
@@ -36,6 +38,7 @@ export default class AdotanteEntity {
     nome: string,
     senha: string,
     celular: string,
+    email: string,
     foto?: string,
     endereco?: EnderecoEntity
   ) {
@@ -43,6 +46,7 @@ export default class AdotanteEntity {
     this.senha = senha;
     this.foto = foto;
     this.celular = celular;
+    this.email = email;
     this.endereco = endereco;
   }
 }

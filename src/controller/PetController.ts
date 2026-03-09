@@ -3,11 +3,7 @@ import EnumEspecie from "../enum/EnumEspecie";
 import EnumPorte from "../enum/EnumPorte";
 import PetRepository from "../repositories/PetRepository";
 import PetEntity from "../entities/PetEntity";
-import {
-  TipoRequestBodyPet,
-  TipoRequestParamsPet,
-  TipoResponseBodyPet,
-} from "../tipos/tiposPet";
+import { TipoRequestBodyPet, TipoRequestParamsPet, TipoResponseBodyPet } from "../tipos/tiposPet";
 
 export default class PetController {
   constructor(private repository: PetRepository) {}

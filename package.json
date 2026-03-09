@@ -25,6 +25,7 @@
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.1.6",
     "tsc-watch": "^6.0.4",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "yup": "^1.7.1"
   }
 }
