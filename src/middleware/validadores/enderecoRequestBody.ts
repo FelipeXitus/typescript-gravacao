@@ -1,7 +1,9 @@
 import * as yup from "yup";
 import { Request, Response, NextFunction } from "express";
 import EnderecoEntity from "../../entities/EnderecoEntity";
-import { TipoRequestBodyAdotante } from "../../tipos/tiposAdotante";
+import { pt } from "yup-locale-pt";
+
+yup.setLocale(pt);
 
 const schemaBodyEndereco: yup.ObjectSchema<Omit<EnderecoEntity, "id">> = yup.object().shape({
   cep: yup.string().defined().required("O CEP é obrigatório"),
