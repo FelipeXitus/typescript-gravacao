@@ -2,6 +2,8 @@ import { Repository } from "typeorm";
 import AdotanteEntity from "../entities/AdotanteEntity";
 import InterfaceAdotanteRepository from "./interfaces/InterfaceAdotanteRepository";
 import EnderecoEntity from "../entities/EnderecoEntity";
+import { NaoEncontrado } from "../utils/manipulaErros";
+
 
 export default class AdotanteRepository implements InterfaceAdotanteRepository {
   constructor(private repository: Repository<AdotanteEntity>) {}
@@ -16,11 +18,10 @@ export default class AdotanteRepository implements InterfaceAdotanteRepository {
     id: number,
     newData: AdotanteEntity
   ): Promise<{ success: boolean; message?: string }> {
-    try {
-      const adotanteToUpdate = await this.repository.findOne({ where: { id } });
+    const adotanteToUpdate = await this.repository.findOne({ where: { id } });
 
       if (!adotanteToUpdate) {
-        return { success: false, message: "Adotante não encontrado" };
+        throw new NaoEncontrado("Adotante não encontrado");
       }
 
       Object.assign(adotanteToUpdate, newData);
@@ -28,35 +29,19 @@ export default class AdotanteRepository implements InterfaceAdotanteRepository {
       await this.repository.save(adotanteToUpdate);
 
       return { success: true };
-    } catch (error) {
-      console.log(error);
-      return {
-        success: false,
-        message: "Ocorreu um erro ao tentar atualizar o adotante.",
-      };
-    }
   }
 
   async deletaAdotante(
     id: number
   ): Promise<{ success: boolean; message?: string }> {
-    try {
-      const adotanteToRemove = await this.repository.findOne({ where: { id } });
+    const adotanteToRemove = await this.repository.findOne({ where: { id } });
 
       if (!adotanteToRemove) {
-        return { success: false, message: "Adotante não encontrado" };
+        throw new NaoEncontrado("Adotante não encontrado");
       }
 
       await this.repository.remove(adotanteToRemove);
-
       return { success: true };
-    } catch (error) {
-      // Se ocorrer um erro inesperado, você pode retornar uma mensagem genérica ou personalizada.
-      return {
-        success: false,
-        message: "Ocorreu um erro ao tentar excluir o adotante.",
-      };
-    }
   }
 
   async atualizaEnderecoAdotante( idAdotante: number, endereco: EnderecoEntity):Promise<{ success: boolean; message?: string }> {
@@ -65,7 +50,7 @@ export default class AdotanteRepository implements InterfaceAdotanteRepository {
     });
 
     if (!adotante) {
-      return { success: false, message: "Adotante não encontrado" };
+      throw new NaoEncontrado("Adotante não encontrado");
     }
     console.log(endereco);
 

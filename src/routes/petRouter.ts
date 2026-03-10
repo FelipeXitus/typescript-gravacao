@@ -3,6 +3,7 @@ import PetController from "../controller/PetController";
 import PetRepository from "../repositories/PetRepository";
 import { AppDataSource } from "../config/dataSource";
 import { middlewareValidaBodyPet } from "../middleware/validadores/petRequestBody";
+import { verificaIdMiddleware } from "../middleware/verificaId";
 
 const router = express.Router();
 const petRepository = new PetRepository(
@@ -15,9 +16,9 @@ const validateBodyPet:RequestHandler = (req, res, next) => middlewareValidaBodyP
 router
   .post("/", validateBodyPet, (req, res) => petController.criaPet(req, res))
   .get("/", (req, res) => petController.listaPet(req, res))
-  .put("/:id", validateBodyPet, (req, res) => petController.atualizaPet(req, res))
-  .delete("/:id", (req, res) => petController.deletaPet(req, res))
-  .put("/:pet_id/:adotante_id", (req, res) => petController.adotaPet(req, res))
+  .put("/:id", verificaIdMiddleware, (req, res) => petController.atualizaPet(req, res))
+  .delete("/:id", verificaIdMiddleware, (req, res) => petController.deletaPet(req, res))
+  .put("/:pet_id/:adotante_id", verificaIdMiddleware, (req, res) => petController.adotaPet(req, res))
   .get("/filtro", (req, res) => petController.buscaPetPorCampoGenerico(req, res));
 
 export default router;
