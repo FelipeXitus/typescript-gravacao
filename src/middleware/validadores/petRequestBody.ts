@@ -4,10 +4,11 @@ import { TipoRequestBodyPet } from "../../tipos/tiposPet";
 import { pt } from "yup-locale-pt";
 import EnumEspecie from "../../enum/EnumEspecie";
 import EnumPorte from "../../enum/EnumPorte";
+import tratarErroValidacaoYup from "../../utils/trataValidacaoYup";
 
 yup.setLocale(pt);
 
-const schemaBodyPet: yup.ObjectSchema<Omit<TipoRequestBodyPet, "adotante">> = yup.object().shape({
+const schemaBodyPet: yup.ObjectSchema<Omit<TipoRequestBodyPet, "adotante" | "abrigo">> = yup.object().shape({
   nome: yup.string().defined().required("O nome é obrigatório"),
   especie: yup.string().oneOf(Object.values(EnumEspecie)).defined().required("A especie é obrigatória"),
   porte: yup.string().oneOf(Object.values(EnumPorte)).defined().optional(),
@@ -15,8 +16,6 @@ const schemaBodyPet: yup.ObjectSchema<Omit<TipoRequestBodyPet, "adotante">> = yu
   adotado: yup.boolean().defined().required("O campo adotado é obrigatório")
 });
 
-export const middlewareValidaBodyPet = (req: Request, res: Response, next: NextFunction) => {
-  schemaBodyPet.validate(req.body, { abortEarly: false })
-    .then(() => next())
-    .catch((err) => res.status(400).json({ errors: err.errors }));
+export const middlewareValidaBodyPet = async (req: Request, res: Response, next: NextFunction) => {
+  tratarErroValidacaoYup(schemaBodyPet, req, res, next);  
 };

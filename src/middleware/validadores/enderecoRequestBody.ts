@@ -2,6 +2,7 @@ import * as yup from "yup";
 import { Request, Response, NextFunction } from "express";
 import EnderecoEntity from "../../entities/EnderecoEntity";
 import { pt } from "yup-locale-pt";
+import tratarErroValidacaoYup from "../../utils/trataValidacaoYup";
 
 yup.setLocale(pt);
 
@@ -14,23 +15,6 @@ const schemaBodyEndereco: yup.ObjectSchema<Omit<EnderecoEntity, "id">> = yup.obj
   estado: yup.string().defined().required("O estado é obrigatório")
 });
 
-const middlewareValidadorBodyEndereco = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await schemaBodyEndereco.validate(req.body, {
-      abortEarly: false,
-      stripUnknown: true,
-    });
-    return next();
-  } catch (error) {
-    const yupErrors = error as yup.ValidationError;
-    const validationErrors: Record<string, string> = {};
-    yupErrors.inner.forEach((err) => {
-      if (err.path) {
-        validationErrors[err.path] = err.message;
-      }
-    });
-    return res.status(400).json({ error: validationErrors });
-  }
+export const middlewareValidadorBodyEndereco = async (req: Request, res: Response, next: NextFunction) => {
+    tratarErroValidacaoYup(schemaBodyEndereco, req, res, next);  
 };
-
-export default middlewareValidadorBodyEndereco;

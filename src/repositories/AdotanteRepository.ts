@@ -1,15 +1,39 @@
 import { Repository } from "typeorm";
 import AdotanteEntity from "../entities/AdotanteEntity";
-import InterfaceAdotanteRepository from "./interfaces/InterfaceAdotanteRepository";
 import EnderecoEntity from "../entities/EnderecoEntity";
-import { NaoEncontrado } from "../utils/manipulaErros";
+import InterfaceAdotanteRepository from "./interfaces/InterfaceAdotanteRepository";
+import { NaoEncontrado, RequisicaoRuim } from "../utils/manipulaErros";
 
 
 export default class AdotanteRepository implements InterfaceAdotanteRepository {
   constructor(private repository: Repository<AdotanteEntity>) {}
 
-  criaAdotante(adotante: AdotanteEntity): void | Promise<void> {
-    this.repository.save(adotante);
+  private async verificaCelularUnico(celular: string){
+   return await this.repository.findOne({ where: { celular } });
+  }
+
+  private async verificaEmailUnico(email: string){
+   return await this.repository.findOne({ where: { email } });
+  }
+
+  private async verificaCpfUnico(cpf: string){
+    return await this.repository.findOne({ where: { cpf } });
+  }
+
+  async criaAdotante(adotante: AdotanteEntity): Promise<void> {
+    if (await this.verificaCelularUnico(adotante.celular)) {
+      throw new RequisicaoRuim("Celular já cadastrado");
+    }
+
+    if (await this.verificaEmailUnico(adotante.email)) {
+      throw new RequisicaoRuim("Email já cadastrado");
+    }
+
+    if (await this.verificaCpfUnico(adotante.cpf)) {
+      throw new RequisicaoRuim("CPF já cadastrado");
+    }
+
+    await this.repository.save(adotante);
   }
   async listaAdotantes(): Promise<AdotanteEntity[]> {
     return await this.repository.find();
@@ -52,7 +76,6 @@ export default class AdotanteRepository implements InterfaceAdotanteRepository {
     if (!adotante) {
       throw new NaoEncontrado("Adotante não encontrado");
     }
-    console.log(endereco);
 
     const novoEndereco = new EnderecoEntity(endereco.logradouro, endereco.numero, endereco.cidade, endereco.estado, endereco.cep, endereco.complemento);
     adotante.endereco = novoEndereco;

@@ -2,8 +2,8 @@ import express, { RequestHandler } from "express";
 import { AppDataSource } from "../config/dataSource";
 import AdotanteController from "../controller/AdotanteController";
 import AdotanteRepository from "../repositories/AdotanteRepository";
-import middlewareValidadorBodyAdotante from "../middleware/validadores/adotanteRequestBody";
-import middlewareValidadorBodyEndereco from "../middleware/validadores/enderecoRequestBody";
+import { middlewareValidadorBodyAdotante } from "../middleware/validadores/adotanteRequestBody";
+import { middlewareValidadorBodyEndereco } from "../middleware/validadores/enderecoRequestBody";
 import { verificaIdMiddleware } from "../middleware/verificaId";
 
 const router = express.Router();

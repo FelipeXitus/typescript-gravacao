@@ -23,10 +23,7 @@ export default class PetRepository implements InterfacePetRepository {
   async listaPet(): Promise<PetEntity[]> {
     return await this.petRepository.find();
   }
-  async atualizaPet(
-    id: number,
-    newData: PetEntity
-  ): Promise<{ success: boolean; message?: string }> {
+  async atualizaPet( id: number, newData: PetEntity ) {
     const petToUpdate = await this.petRepository.findOne({ where: { id } });
 
       if (!petToUpdate) {
@@ -40,7 +37,7 @@ export default class PetRepository implements InterfacePetRepository {
       return { success: true };
   }
 
-  async deletaPet(id: number): Promise<{ success: boolean; message?: string }> {
+  async deletaPet(id: number) {
       const petToRemove = await this.petRepository.findOne({ where: { id } });
 
       if (!petToRemove) {
@@ -52,10 +49,7 @@ export default class PetRepository implements InterfacePetRepository {
       return { success: true };
   }
 
-  async adotaPet(
-    idPet: number,
-    idAdotante: number
-  ): Promise<{ success: boolean; message?: string }> {
+  async adotaPet( idPet: number, idAdotante: number ) {
     const pet = await this.petRepository.findOne({ where: { id: idPet } });
     if (!pet) {
       throw new NaoEncontrado("Pet não encontrado");

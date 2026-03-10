@@ -6,9 +6,8 @@ type TipoRequestParamsAdotante = { id?: string };
 
 type TipoResponseBodyAdotante = {
   dados?:
-    | Pick<AdotanteEntity, "id" | "nome" | "celular" | "email" | "endereco">
-    | Pick<AdotanteEntity, "id" | "nome" | "celular" | "email" | "endereco">[];
-  erros?: unknown;
+    | Pick<AdotanteEntity, "id" | "nome" | "cpf" | "celular" | "email" | "endereco">
+    | Pick<AdotanteEntity, "id" | "nome" | "cpf" | "celular" | "email" | "endereco">[];
 };
 
 export {

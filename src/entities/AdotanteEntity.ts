@@ -11,9 +11,11 @@ export default class AdotanteEntity {
   nome: string;
   @Column()
   senha: string;
-  @Column()
+  @Column({ unique:true })
+  cpf: string;
+  @Column({unique: true})
   celular: string;
-  @Column()
+  @Column({unique: true})
   email: string;
   @Column({ nullable: true })
   foto?: string;
@@ -31,6 +33,7 @@ export default class AdotanteEntity {
   constructor(
     nome: string,
     senha: string,
+    cpf: string,
     celular: string,
     email: string,
     foto?: string,
@@ -38,6 +41,7 @@ export default class AdotanteEntity {
   ) {
     this.nome = nome;
     this.senha = senha;
+    this.cpf = cpf;
     this.foto = foto;
     this.celular = celular;
     this.email = email;
