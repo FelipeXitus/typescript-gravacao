@@ -2,26 +2,29 @@ import { Repository } from "typeorm";
 import PetEntity from "../entities/PetEntity";
 import InterfacePetRepository from "./interfaces/InterfacePetRepository";
 import AdotanteEntity from "../entities/AdotanteEntity";
-import EnumPorte from "../enum/EnumPorte";
 import { NaoEncontrado } from "../utils/manipulaErros"
+import AbrigoEntity from "../entities/AbrigoEntity";
 
 export default class PetRepository implements InterfacePetRepository {
   private petRepository: Repository<PetEntity>;
   private adotanteRepository: Repository<AdotanteEntity>;
+  private abrigoRepository: Repository<AbrigoEntity>;
 
   constructor(
     petRepository: Repository<PetEntity>,
-    adotanteRepository: Repository<AdotanteEntity>
+    adotanteRepository: Repository<AdotanteEntity>,
+    abrigoRepository: Repository<AbrigoEntity>
   ) {
     this.petRepository = petRepository;
     this.adotanteRepository = adotanteRepository;
+    this.abrigoRepository = abrigoRepository;
   }
 
   async criaPet(pet: PetEntity): Promise<void> {
     await this.petRepository.save(pet);
   }
   async listaPet(): Promise<PetEntity[]> {
-    return await this.petRepository.find();
+    return await this.petRepository.find({relations: ["abrigo", "adotante"]});
   }
   async atualizaPet( id: number, newData: PetEntity ) {
     const petToUpdate = await this.petRepository.findOne({ where: { id } });
@@ -64,6 +67,22 @@ export default class PetRepository implements InterfacePetRepository {
 
     pet.adotante = adotante;
     pet.adotado = true;
+    await this.petRepository.save(pet);
+    return { success: true };
+  }
+
+  async alocaPetAbrigo( idPet: number, idAbrigo: number ) {
+    const pet = await this.petRepository.findOne({ where: { id: idPet } });
+    if (!pet) {
+      throw new NaoEncontrado("Pet não encontrado");
+    }
+
+    const abrigo = await this.abrigoRepository.findOne({ where: { id: idAbrigo } });
+    if (!abrigo) {
+      throw new NaoEncontrado("Abrigo não encontrado");
+    }
+
+    pet.abrigo = abrigo;
     await this.petRepository.save(pet);
     return { success: true };
   }

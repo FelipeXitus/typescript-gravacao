@@ -39,6 +39,9 @@ export default class PetController {
         nome: pet.nome,
         porte: pet.porte!==null? pet.porte : undefined,
         especie: pet.especie,
+        adotado: pet.adotado,
+        abrigo: pet.abrigo ? { id: pet.abrigo.id, nome: pet.abrigo.nome } : undefined,
+        adotante: pet.adotante ? { id: pet.adotante.id, nome: pet.adotante.nome } : undefined,
       };
     });
     return res.status(200).json({ dados: data });
@@ -87,6 +90,23 @@ export default class PetController {
 
     if (!success) {
       throw new RequisicaoRuim("Não foi possível adotar o pet");
+    }
+    return res.sendStatus(204);
+  }
+
+  async alocaPetAbrigo(
+    req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>,
+    res: Response<TipoResponseBodyPet>
+  ) {
+    const { pet_id, abrigo_id } = req.params;
+
+    const { success } = await this.repository.alocaPetAbrigo(
+      Number(pet_id),
+      Number(abrigo_id)
+    );
+
+    if (!success) {
+      throw new RequisicaoRuim("Não foi possível alocar o pet");
     }
     return res.sendStatus(204);
   }

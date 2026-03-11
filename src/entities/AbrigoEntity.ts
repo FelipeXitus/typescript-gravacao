@@ -8,11 +8,11 @@ export default class AbrigoEntity {
     id!: number;
     @Column()
     nome: string;
-    @Column()
+    @Column({ unique: true })
     email: string;
-    @Column()
+    @Column({ unique: true })
     celular: string;
-    @Column()
+    @Column({ unique: true })
     cnpj: string;
     @Column()
     senha: string;

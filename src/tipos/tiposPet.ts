@@ -6,6 +6,7 @@ type TipoRequestParamsPet = {
   id?: string;
   pet_id?: string;
   adotante_id?: string;
+  abrigo_id?: string;
 };
 
 type TipoResponseBodyPet = {
